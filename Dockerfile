@@ -27,7 +27,8 @@ WORKDIR /var/www
 
 COPY . .
 
-RUN composer install
+RUN composer install --no-dev --optimize-autoloader
+
 
 # Fix permissions for Laravel storage and cache folders
 RUN chown -R www-data:www-data storage bootstrap/cache \
