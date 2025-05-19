@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: blog_app
+    volumes:
+      - .:/var/www
+    networks:
+      - blog_network
+
+  web:
+    image: nginx:alpine           # Download nginx:alpine image from Docker Hub for creating a lightweight Nginx container
+    container_name: blog_nginx     # Name of the container 
+    ports:
+      - "8088:80"                 # Maps host machine port 8080 to container's internal port 80 (Nginx) # 
+    volumes:
+      - .:/var/www                # . mean current directory all code Bind to /var/www in the container
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf # ./nginx/default.conf  mean /nginx/default.conf file ar code will be bind to /etc/nginx/conf.d/default.conf in the container
+    depends_on:
+      - app                       # 1st start app container (PHP/Laravel) then Nginx container (nginx_web)  - but nginx do not wait until Laravel service is ready 
+    networks:
+      - blog_network                   #  container (nginx_web) laravel  
+
+  mysql:                          # service name or container name
+    image: mysql:8.0              # Download mysql:8.0 image from Docker Hub for creating a MySQL container
+    container_name: blog_mysql      # Name of the container
+    ports:                         
+      - "3308:3306"               # Maps host machine (Mac/Ubuntu/Windows/server) port 3307 to container ( MySQL) internal port 3306 
+    environment:
+      MYSQL_ROOT_PASSWORD: 12345678   # Default root user of MySQl password will be set: 12345678
+      MYSQL_DATABASE: blog            # MySQL database name
+      MYSQL_USER: mahmud              # MySQL new user name 
+      MYSQL_PASSWORD: 12345678        # MySQL new user password
+    volumes:
+      - mysql_data:/var/lib/mysql     # mysql_data volume will be created and bind or attached to /var/lib/mysql in the container. mysql_data: Name of Docker volume which have Host Machine, /var/lib/mysql: Location of data store place inside of Mysql container
+    networks:
+      - blog_network                       # This container (mysql)  stay into 'laravel' Docker network so that it (mysql ) can communicate with other services (like app, nginx)
+
+
+networks:
+  blog_network:
+
+volumes:
+  mysql_data:
