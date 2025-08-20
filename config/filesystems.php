@@ -59,6 +59,15 @@ return [
             'throw' => false,
             'report' => false,
         ],
+            'sftp' => [
+            'driver' => 'sftp',
+            'host' => '160.191.129.45',   // তোমার server IP
+            'username' => 'root',         // তোমার server username
+            'password' => 'Mahmudhossain582@2025Dev!', // password (অথবা privateKey ব্যবহার করতে পারো)
+            'port' => 22,
+            'root' => '/root/uploads', // server এ কোন path এ save হবে
+            // 'privateKey' => '/path/to/private/key', // যদি key based login হয়
+        ],
 
     ],
 
