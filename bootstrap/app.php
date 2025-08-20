@@ -10,6 +10,11 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
     )
+    ->withSchedule(function (\Illuminate\Console\Scheduling\Schedule $schedule) {
+
+        $schedule->job(new \App\Jobs\LogTimestampJob)->everyMinute();
+
+    })
     ->withMiddleware(function (Middleware $middleware) {
         //
     })
