@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\SFTPFileUploadController;
 
-Route::get('/mahmud', function () {
+Route::get('/', function () {
 
     // dd('Welcome to the Laravel application!');
 
