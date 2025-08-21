@@ -127,11 +127,9 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
         'timestamp_log' => [
-            'driver' => 'daily',
-            'path' => storage_path('logs/timestamp_log.log'),
-            'level' => env('LOG_LEVEL', 'debug'),
-            'days' => env('LOG_DAILY_DAYS', 14),
-            'replace_placeholders' => true,
+            'driver' => 'single',
+            'path' => storage_path('logs/timestamp_log/timestamp_log.log'),
+            'level' => env('LOG_LEVEL', 'info'),
         ],
 
     ],
