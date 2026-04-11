@@ -25,7 +25,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-COPY . .
+# প্রথম . (source) and দ্বিতীয় . (destination) , local project-এর সব file → container-এর WORKDIR-এ কপি করো  so COPY (local folder) → /var/www
+COPY . .   
 
 RUN composer install
 

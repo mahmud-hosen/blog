@@ -1,20 +1,20 @@
 version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: blog_laravel_app
-    volumes:
-      - .:/var/www
-    networks:
+  app:                                # Service name or container name
+    build:                            # Tells Compose to build a custom image (instead of pulling from Docker Hub)
+      context: .                      # Context directory (current project root) , The directory Docker sends to the build daemon — `.` means current project root
+      dockerfile: Dockerfile          # Dockerfile path (explicit, even though Dockerfile is the default) , Which Dockerfile to use
+    container_name: blog_laravel_app  # Name of the container , Gives the running container a human-readable name (instead of a random hash)
+    volumes:                          # Bind mount , Maps your local project folder (`.`) to `/var/www` inside the container. **Live sync** — code changes on your Mac immediately reflect inside the container
+      - .:/var/www                    # প্রথম . (source) and দ্বিতীয় . (destination) , local project-এর সব file → container-এর WORKDIR-এ কপি করো  so COPY (local folder) → /var/www
+    networks:                         # Connects this container to the custom `laravel` network so it can talk to Nginx and MySQL
       - laravel
 
   web:
-    image: nginx:alpine           # Download nginx:alpine image from Docker Hub for creating a lightweight Nginx container
-    container_name: blog_nginx_web     # Name of the container 
-    ports:
+    image: nginx:alpine           # Pull nginx:alpine image from Docker Hub for creating a lightweight Nginx container
+    container_name: blog_nginx_web     # Name of the container , Human-readable name for the Nginx container 
+    ports:                             # Maps host machine port 8080 to container's internal port 80 (Nginx) , When you access `http://localhost:8080` in your browser, it will be forwarded to port 80 inside the Nginx container, allowing you to see your Laravel app served by Nginx.
       - "8086:80"                 # Maps host machine port 8080 to container's internal port 80 (Nginx) # 
     volumes:
       - .:/var/www                # . mean current directory all code Bind to /var/www in the container
@@ -25,7 +25,7 @@ services:
       - laravel                   #  container (nginx_web) laravel  
 
   mysql:                          # service name or container name
-    image: mysql:8.0              # Download mysql:8.0 image from Docker Hub for creating a MySQL container
+    image: mysql:8.0              # Pull mysql:8.0 image from Docker Hub for creating a MySQL container
     container_name: blog_mysql_db      # Name of the container
     ports:                         
       - "3307:3306"               # Maps host machine (Mac/Ubuntu/Windows/server) port 3307 to container ( MySQL) internal port 3306 
@@ -35,24 +35,24 @@ services:
       MYSQL_USER: mahmud              # MySQL new user name 
       MYSQL_PASSWORD: 12345678        # MySQL new user password
     volumes:
-      - mysql_data:/var/lib/mysql     # mysql_data volume will be created and bind or attached to /var/lib/mysql in the container. mysql_data: Name of Docker volume which have Host Machine, /var/lib/mysql: Location of data store place inside of Mysql container
+      - mysql_data:/var/lib/mysql     # <volume_name stored on host > : <container_path>    mysql_data volume will be created and bind or attached to /var/lib/mysql in the container. (  mysql_data mean Name of Docker volume which have Host Machine ) and ( /var/lib/mysql mean Location of data store place inside of Mysql container )
     networks:
       - laravel                       # This container (mysql)  stay into 'laravel' Docker network so that it (mysql ) can communicate with other services (like app, nginx)
 
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: blog_rabbitmq
-    ports:
-      - "5672:5672"    
-      - "15672:15672"   
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    networks:
-      - laravel
+  rabbitmq:                           # service name or container name
+    image: rabbitmq:3-management      # Pull rabbitmq:3-management image from Docker Hub for creating a RabbitMQ container with management plugin
+    container_name: blog_rabbitmq.    # Name of the container
+    ports:                            # Maps host machine port 5672 to container's internal port 5672 (RabbitMQ) and host machine port 15672 to container's internal port 15672 (RabbitMQ Management UI) , When you access `http://localhost:15672` in your browser, it will be forwarded to port 15672 inside the RabbitMQ container, allowing you to access the RabbitMQ Management UI.
+      - "5672:5672"                   # Maps host machine port 5672 to container's internal port 5672 (RabbitMQ)
+      - "15672:15672"                 # Maps host machine port 15672 to container's internal port 15672 (RabbitMQ Management UI)
+    environment:                      # Set environment variables for RabbitMQ configuration
+      RABBITMQ_DEFAULT_USER: guest     # Default username for RabbitMQ will be set: guest
+      RABBITMQ_DEFAULT_PASS: guest     # Default password for RabbitMQ will be set: guest
+    networks:                         # This container (rabbitmq)  stay into 'laravel' Docker network so that it (rabbitmq ) can communicate with other services (like app, nginx)
+      - laravel                       # This container (rabbitmq)  stay into 'laravel' Docker network so that it (rabbitmq ) can communicate with other services (like app, nginx)
 
-networks:
-  laravel:
+networks:                             # Define a custom network named 'laravel' for inter-service communication
+  laravel:                            # This custom network allows the app, web, mysql, and rabbitmq services to communicate with each other using their service names as hostnames (e.g., the app service can connect to the mysql service using 'mysql' as the hostname).
 
-volumes:
+volumes:                              # Define a named volume for MySQL data persistence
   mysql_data:
