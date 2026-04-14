@@ -51,17 +51,17 @@ services:
     networks:                         # This container (rabbitmq)  stay into 'laravel' Docker network so that it (rabbitmq ) can communicate with other services (like app, nginx)
       - laravel                       # This container (rabbitmq)  stay into 'laravel' Docker network so that it (rabbitmq ) can communicate with other services (like app, nginx)
 
-    phpmyadmin:
-      image: phpmyadmin/phpmyadmin
-      container_name: blog_phpmyadmin
-      restart: always
-      ports:
-        - "8087:80"
-      environment:
-        PMA_HOST: mysql
-        PMA_PORT: 3306
-      networks:
-        - laravel
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: blog_phpmyadmin
+    restart: always
+    ports:
+      - "8087:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    networks:
+      - laravel
 
 networks:                             # Define a custom network named 'laravel' for inter-service communication
   laravel:                            # This custom network allows the app, web, mysql, and rabbitmq services to communicate with each other using their service names as hostnames (e.g., the app service can connect to the mysql service using 'mysql' as the hostname).
